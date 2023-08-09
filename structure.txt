@@ -1,0 +1,66 @@
+src folder structure:
+ * assets
+ * components
+ * modules
+ * hooks - global access
+ * services - global access
+ 
+--------------------
+
+header high level:
+ * add photo via link
+ * scroll to the top
+ * scroll to the bottom
+
+Img container (body) high level:
+ * handle the data (will be array) and map over it
+ * photos:
+    - create a component for photos that manage the photos:
+      - img modal component -> will handle the enlarge, delete (when adding to the arr at the end its O(1), adding to the start of the arr will be O(n))
+      - img component -> will handle the img display and position
+ * loader - no api call if using the drive, might add mock timeout to enable loader
+
+--------------------
+
+general: 
+ * minimum mobile support 320px
+ * check that the app supports 1M photos via mock photo api
+ * animated mouse is a nice touch
+
+--------------------
+
+components: 
+ * imgComponent - will handle single img:
+    - click will open new modal with the image enlarged
+    - 3 dots white bar that will open the option to delete or duplicate
+    - OPTIONAL drag and drop, will need to manage this from the parent as well
+
+ * Gallery - will be responsible for the display of the page
+    - directly under App
+
+--------------------
+
+APP JSX:
+ <QueryProvider>
+  <Cursor />
+  <Gallery />
+ </QueryProvider>
+
+Gallery JSX:
+<>
+  <Header>
+  <Gallery>
+  <Footer> // not sure its needed atm
+<>
+
+--------------------
+
+optimization & clean code:
+ - use react-query for the api call
+ - add element to the end of the array (O(1)) instead of the start (O(n))
+ - consider loading in chunks instead of the total array at once (only for really big arrays) - not implemented
+ - set img id as its index in the arr, will reduce iteration when deleting or duplicating
+ - would prefer to implement useContext over prop drilling if the app was more complex
+
+LEFT: 
+header, and support files from google public folder
