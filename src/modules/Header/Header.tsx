@@ -20,6 +20,7 @@ const Header = ({ addToArr, scrollTop, scrollBottom }: IHeader) => {
   const handleOnInputBtnClick = () => {
     addToArr(url, 'new image');
     setIsGetInput((prev) => !prev);
+    setUrl('');
   };
 
   return (
