@@ -61,6 +61,4 @@ optimization & clean code:
  - consider loading in chunks instead of the total array at once (only for really big arrays) - not implemented
  - set img id as its index in the arr, will reduce iteration when deleting or duplicating
  - would prefer to implement useContext over prop drilling if the app was more complex
-
-LEFT: 
-header, and support files from google public folder
+ - when using the drive, images load with lower resolution (thumbnail) and when enlarged, loading better quality image

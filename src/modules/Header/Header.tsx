@@ -1,44 +1,65 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import S from './styled';
+import StyledInput from '../../components/Input/StyledInput';
+import { callback, stateENUM, placeHolderText } from './helper';
 
 interface IHeader {
   addToArr: (url: string, description: string) => void;
   scrollTop: () => void;
   scrollBottom: () => void;
+  setDriveId: (str: string) => void;
+  driveId: string;
+  refetch: () => void;
 }
 
-const Header = ({ addToArr, scrollTop, scrollBottom }: IHeader) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [isGetInput, setIsGetInput] = useState<boolean>(false);
+const Header = ({
+  addToArr,
+  scrollTop,
+  scrollBottom,
+  setDriveId,
+  driveId,
+  refetch,
+}: IHeader) => {
+  const [InputId, setInputId] = useState<number>(stateENUM.off);
   const [url, setUrl] = useState<string>('');
 
-  const handleAdd = () => setIsGetInput((prev) => !prev);
-  const handleTop = () => scrollTop();
-  const handleBottom = () => scrollBottom();
+  const handleChangeToInput = (stateId: number) => () => {
+    setInputId(stateId);
+  };
 
-  const handleInputOnChange = () => setUrl(inputRef.current?.value || '');
+  // on input change
+  const handleInputOnChange = (str: string) => {
+    if (InputId === stateENUM.add) setUrl(str);
+    if (InputId === stateENUM.drive) setDriveId(str);
+  };
+  //
+  // when clicking on "add"
   const handleOnInputBtnClick = () => {
-    addToArr(url, 'new image');
-    setIsGetInput((prev) => !prev);
+    if (InputId === stateENUM.add) addToArr(url, 'new image');
+    if (InputId === stateENUM.drive && driveId.length > 0) refetch();
+    setInputId(stateENUM.off);
     setUrl('');
   };
+  //
 
   return (
     <S.Wrapper>
-      {isGetInput ? (
-        <>
-          <S.Input
-            ref={inputRef}
-            onChange={handleInputOnChange}
-            placeholder="Image url"
-          />
-          <S.InputBtn onClick={handleOnInputBtnClick}>Add</S.InputBtn>
-        </>
+      {InputId !== stateENUM.off ? (
+        <StyledInput
+          handleInputOnChange={handleInputOnChange}
+          handleOnInputBtnClick={handleOnInputBtnClick}
+          placeHolder={placeHolderText[InputId]}
+        />
       ) : (
         <>
-          <S.HeaderBtn onClick={handleTop}>Top</S.HeaderBtn>
-          <S.HeaderBtn onClick={handleAdd}>Add</S.HeaderBtn>
-          <S.HeaderBtn onClick={handleBottom}>Bottom</S.HeaderBtn>
+          <S.HeaderBtn onClick={handleChangeToInput(stateENUM.drive)}>
+            Drive
+          </S.HeaderBtn>
+          <S.HeaderBtn onClick={callback(scrollTop)}>Top</S.HeaderBtn>
+          <S.HeaderBtn onClick={handleChangeToInput(stateENUM.add)}>
+            Add
+          </S.HeaderBtn>
+          <S.HeaderBtn onClick={callback(scrollBottom)}>Bottom</S.HeaderBtn>
         </>
       )}
     </S.Wrapper>

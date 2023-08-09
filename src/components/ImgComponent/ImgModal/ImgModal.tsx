@@ -2,6 +2,8 @@ import S from './styled';
 import { IImgComponent } from '../ImgComponent';
 import deleteIcon from '../../../assets/deleteIcon.png';
 import duplicateIcon from '../../../assets/duplicateIcon.png';
+import { useState } from 'react';
+import BouncingDotsLoader from '../../Loader/Loader';
 
 interface IImgModal extends IImgComponent {
   showModal: boolean;
@@ -16,8 +18,10 @@ const ImgModal = ({
   addToArr,
   removeFromArr,
 }: IImgModal) => {
+  const [isImgLoading, setIsImgLoading] = useState<boolean>(true);
   if (!showModal) return;
 
+  const handleStopLoader = () => setIsImgLoading(false);
   const handleDeleteFunc = () => {
     removeFromArr(arrPosition);
   };
@@ -29,10 +33,25 @@ const ImgModal = ({
   return (
     <S.ImgModalWrapper>
       <S.IconsWrapper>
-        <S.Icon onClick={handleDeleteFunc} src={deleteIcon} alt="delete" />
-        <S.Icon onClick={handleAddFunc} src={duplicateIcon} alt="duplicate" />
+        {isImgLoading ? (
+          <></>
+        ) : (
+          <S.Icon onClick={handleDeleteFunc} src={deleteIcon} alt="delete" />
+        )}
+        {isImgLoading ? (
+          <></>
+        ) : (
+          <S.Icon onClick={handleAddFunc} src={duplicateIcon} alt="duplicate" />
+        )}
       </S.IconsWrapper>
-      <S.LargeImgTag draggable={false} src={url} alt={description} />
+      {isImgLoading ? <BouncingDotsLoader /> : <></>}
+      <S.LargeImgTag
+        onLoad={handleStopLoader}
+        onError={handleStopLoader}
+        draggable={false}
+        src={url}
+        alt={description}
+      />
     </S.ImgModalWrapper>
   );
 };

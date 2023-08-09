@@ -11,6 +11,7 @@ export interface IImgComponent extends IPhoto {
 const ImgComponent = ({
   description,
   url,
+  qualityUrl,
   arrPosition,
   addToArr,
   removeFromArr,
@@ -22,7 +23,7 @@ const ImgComponent = ({
     <>
       <S.ImgWrapper onClick={handleOnClick}>
         <ImgModal
-          url={url}
+          url={qualityUrl ? qualityUrl : url}
           arrPosition={arrPosition!}
           description={description}
           addToArr={addToArr}
