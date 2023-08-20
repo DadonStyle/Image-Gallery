@@ -7,16 +7,26 @@ import Header from '../Header/Header';
 import { Notyf } from 'notyf';
 import 'notyf/notyf.min.css';
 import { formatUrl } from './helper';
-import BouncingDotsLoader from '../../components/Loader/Loader';
+// import BouncingDotsLoader from '../../components/Loader/Loader';
+// import InfiniteScroll from 'react-infinite-scroll-component';
 
 const Gallery = () => {
-  var notyf = new Notyf();
+  // consts
+  const LIMIT_TOTAL_IMG = 120;
+
+  // state
   const [imgArr, setImgArr] = useState<Array<IPhoto>>([]);
   const [driveId, setDriveId] = useState<string>('');
+
+  // hooks
   const query = useFetchImgs(setImgArr, driveId);
   const topRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // varbs
+  var notyf = new Notyf();
+
+  // functions
   const scrollTop = () =>
     topRef.current?.scrollIntoView({ behavior: 'smooth' });
 
@@ -49,7 +59,7 @@ const Gallery = () => {
     notyf.success('Img removed successfully');
   };
 
-  if (query.isFetching) return <BouncingDotsLoader />;
+  // if (query.isFetching) return <BouncingDotsLoader />;
 
   return (
     <>
@@ -62,7 +72,12 @@ const Gallery = () => {
         driveId={driveId}
         refetch={query.refetch}
       />
-      <S.GridLayout>
+      <S.InfiniteScrollGrid
+        dataLength={imgArr.length}
+        next={query.refetch}
+        hasMore={imgArr.length < LIMIT_TOTAL_IMG}
+        loader={<h4>Loading...</h4>}
+      >
         {imgArr.map((item: IPhoto, index: number) => (
           <ImgComponent
             url={item.url} // make sure the component can add google drive files too in the url
@@ -74,8 +89,8 @@ const Gallery = () => {
             removeFromArr={removeFromArr}
           />
         ))}
-        <S.BottomAnchor ref={bottomRef} />
-      </S.GridLayout>
+      </S.InfiniteScrollGrid>
+      <S.BottomAnchor ref={bottomRef} />
     </>
   );
 };

@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import axios from 'axios';
 import { IPhoto } from '../services/interface';
 import { gapi } from 'gapi-script';
+import { useState } from 'react';
 
 // init for google api
 const initAPI = async () => {
@@ -40,10 +41,20 @@ const fetchFromDrive = async (driveId: string) => {
   return imgUrls;
 };
 
+interface paginationState {
+  count: number;
+  numPage: number;
+}
+
 const useFetchImgs = (
   setImgArr: (arr: Array<IPhoto>) => void,
   driveId: string
 ) => {
+  const PAGE_COUNT = 20;
+  const [pagination, setPagination] = useState<paginationState>({
+    count: PAGE_COUNT,
+    numPage: 1,
+  });
   const query = useQuery({
     queryKey: ['imgArr'],
     queryFn: async () => {
@@ -54,8 +65,13 @@ const useFetchImgs = (
       }
 
       const res = await axios.get(
-        'https://api.slingacademy.com/v1/sample-data/photos?offset=5&limit=2000'
+        `https://api.slingacademy.com/v1/sample-data/photos?offset=5&limit=${pagination.count}`
       );
+
+      setPagination((prev) => ({
+        count: prev.count + PAGE_COUNT,
+        numPage: prev.count + 1,
+      }));
       if (res?.data) setImgArr(res?.data?.photos);
     },
     retry: 1,
